@@ -82,6 +82,21 @@ async function getRandomElement() {
 
     return effect
 }
+
+async function getRandomTurbo() {
+    let winner = Math.random();
+    let point
+
+    switch (true) {
+        case winner < 0.6:
+            point = "+ 1 ponto";
+            break;
+        default:
+            point = "";
+    }
+
+    return point
+}
 // const prompt = require('prompt-sync')();
 // const nome = prompt('Qual seu nome: ');
 // console.log("Olá " + nome);
@@ -98,9 +113,16 @@ async function playRaceEngine(character1, character2) {
         let block = await getRandomBlock();
         console.log(`Bloco: ${block}`);
 
+        //sortear elemento
         let element = await getRandomElement();
         if (block === "CONFRONTO") {
             console.log(`Efeito: ${element}`)
+        }
+
+        //sortear turbo
+        let turbo = await getRandomTurbo();
+        if (block === "+ 1 ponto") {
+            console.log(`Turbo: ${turbo}`)
         }
         
         //rolar dados
@@ -145,17 +167,34 @@ async function playRaceEngine(character1, character2) {
         if (powerResult1 > powerResult2 && character2.pontos > 0 && element === "CASCO") {
             console.log(`${character1.nome} Venceu o confronto! ${character2.nome} perdeu um ponto 💥.`);
             character2.pontos --;
-        }else if (powerResult1 > powerResult2 && character2.pontos > 1 && element === "BOMBA") {
+        }
+        if (powerResult1 > powerResult2 && character2.pontos > 1 && element === "BOMBA") {
             console.log(`${character1.nome} Venceu o confronto! ${character2.nome} perdeu dois pontos 💥.`);
             character2.pontos -= 2;
+        }else if (powerResult1 > powerResult2 && character2.pontos > 0 && character2.pontos < 2 && element === "BOMBA") {
+            console.log(`${character1.nome} Venceu o confronto! ${character2.nome} perdeu um ponto 💥.`);
+            character2.pontos --;
+        }
+        if (powerResult1 > powerResult2 && turbo === "+ 1 ponto") {
+            console.log(`\nParabéns, ${character1.nome} ganhou um ponto 🎰.`);
+            character1.pontos ++;
         }
 
         if (powerResult2 > powerResult1 && character1.pontos > 0 && element === "CASCO") {
             console.log(`${character2.nome} Venceu o confronto! ${character1.nome} perdeu um ponto 💥.`);
             character1.pontos --;
-        }else if (powerResult2 > powerResult1 && character1.pontos > 1 && element === "BOMBA") {
+        }
+        
+        if (powerResult2 > powerResult1 && character1.pontos > 1 && element === "BOMBA") {
             console.log(`${character2.nome} Venceu o confronto! ${character1.nome} perdeu dois pontos 💥.`);
             character1.pontos -= 2;
+        }else if (powerResult2 > powerResult1 && character1.pontos > 0 && character1.pontos < 2 && element === "BOMBA") {
+            console.log(`${character2.nome} Venceu o confronto! ${character1.nome} perdeu um ponto 💥.`);
+            character1.pontos --;
+        }
+        if (powerResult2 > powerResult1 && turbo === "+ 1 ponto") {
+            console.log(`\nParabéns, ${character2.nome} ganhou um ponto 🎰.`);
+            character2.pontos ++;
         }
 
         console.log(powerResult2 === powerResult1 ? "Confronto empatado! Nenhum ponto foi perdido." : "");
